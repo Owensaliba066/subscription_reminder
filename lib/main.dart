@@ -12,6 +12,7 @@ Future<void> main() async {
   await Hive.initFlutter();
   await Hive.openBox('subscriptions');
   await NotificationService.initialize();
+  await NotificationService.requestPermissions();
 
   runApp(const SubscriptionReminderApp());
 }

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../models/subscription.dart';
 import '../providers/subscription_provider.dart';
+import '../services/notification_service.dart';
 import 'add_subscription_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -15,6 +16,21 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Subscription Reminder'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await NotificationService.showTestNotification();
+
+              if (!context.mounted) return;
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Test notification triggered.')),
+              );
+            },
+            icon: const Icon(Icons.notifications_active),
+            tooltip: 'Test Notification',
+          ),
+        ],
       ),
       body: Consumer<SubscriptionProvider>(
         builder: (context, provider, child) {
