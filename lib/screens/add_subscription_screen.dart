@@ -61,6 +61,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
       final location = await LocationService.getCurrentLocationText();
 
       final subscription = Subscription(
+        id: DateTime.now().microsecondsSinceEpoch.toString(),
         name: _nameController.text.trim(),
         price: double.parse(_priceController.text.trim()),
         renewalDate: _selectedDate!,
@@ -106,6 +107,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Card(
+          elevation: 3,
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Form(

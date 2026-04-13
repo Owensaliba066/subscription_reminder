@@ -28,19 +28,19 @@ class SubscriptionProvider extends ChangeNotifier {
 
   Future<void> addSubscription(Subscription subscription) async {
     final box = Hive.box('subscriptions');
-    await box.add(subscription.toMap());
+
+    await box.put(subscription.id, subscription.toMap());
 
     _subscriptions.add(subscription);
     _subscriptions.sort((a, b) => a.renewalDate.compareTo(b.renewalDate));
     notifyListeners();
   }
 
-  Future<void> deleteSubscription(int index) async {
+  Future<void> deleteSubscription(String id) async {
     final box = Hive.box('subscriptions');
 
-    if (index >= 0 && index < box.length) {
-      await box.deleteAt(index);
-      await loadSubscriptions();
-    }
+    await box.delete(id);
+    _subscriptions.removeWhere((subscription) => subscription.id == id);
+    notifyListeners();
   }
 }
