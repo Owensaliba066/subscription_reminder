@@ -62,6 +62,7 @@ class _AddSubscriptionScreenState extends State<AddSubscriptionScreen> {
 
       final subscription = Subscription(
         id: DateTime.now().microsecondsSinceEpoch.toString(),
+        hiveKey: null,
         name: _nameController.text.trim(),
         price: double.parse(_priceController.text.trim()),
         renewalDate: _selectedDate!,

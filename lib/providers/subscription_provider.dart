@@ -10,17 +10,20 @@ class SubscriptionProvider extends ChangeNotifier {
 
   Future<void> loadSubscriptions() async {
     final box = Hive.box('subscriptions');
-    final storedItems = box.values.toList();
 
-    _subscriptions
-      ..clear()
-      ..addAll(
-        storedItems
-            .map(
-              (item) => Subscription.fromMap(Map<dynamic, dynamic>.from(item)),
-            )
-            .toList(),
-      );
+    _subscriptions.clear();
+
+    for (final entry in box.toMap().entries) {
+      final value = entry.value;
+
+      if (value is Map) {
+        final subscription = Subscription.fromMap(
+          Map<dynamic, dynamic>.from(value),
+          hiveKey: entry.key,
+        );
+        _subscriptions.add(subscription);
+      }
+    }
 
     _subscriptions.sort((a, b) => a.renewalDate.compareTo(b.renewalDate));
     notifyListeners();
@@ -29,18 +32,22 @@ class SubscriptionProvider extends ChangeNotifier {
   Future<void> addSubscription(Subscription subscription) async {
     final box = Hive.box('subscriptions');
 
-    await box.put(subscription.id, subscription.toMap());
+    final key = await box.add(subscription.toMap());
 
-    _subscriptions.add(subscription);
+    final savedSubscription = subscription.copyWith(hiveKey: key);
+
+    _subscriptions.add(savedSubscription);
     _subscriptions.sort((a, b) => a.renewalDate.compareTo(b.renewalDate));
     notifyListeners();
   }
 
-  Future<void> deleteSubscription(String id) async {
+  Future<void> deleteSubscription(dynamic hiveKey) async {
     final box = Hive.box('subscriptions');
 
-    await box.delete(id);
-    _subscriptions.removeWhere((subscription) => subscription.id == id);
+    await box.delete(hiveKey);
+    _subscriptions.removeWhere(
+      (subscription) => subscription.hiveKey == hiveKey,
+    );
     notifyListeners();
   }
 }

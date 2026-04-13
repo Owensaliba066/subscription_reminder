@@ -1,5 +1,6 @@
 class Subscription {
   final String id;
+  final dynamic hiveKey;
   final String name;
   final double price;
   final DateTime renewalDate;
@@ -8,6 +9,7 @@ class Subscription {
 
   Subscription({
     required this.id,
+    required this.hiveKey,
     required this.name,
     required this.price,
     required this.renewalDate,
@@ -26,7 +28,7 @@ class Subscription {
     };
   }
 
-  factory Subscription.fromMap(Map<dynamic, dynamic> map) {
+  factory Subscription.fromMap(Map<dynamic, dynamic> map, {dynamic hiveKey}) {
     final createdAt =
         DateTime.tryParse(map['createdAt']?.toString() ?? '') ?? DateTime.now();
 
@@ -34,6 +36,7 @@ class Subscription {
       id: map['id']?.toString().isNotEmpty == true
           ? map['id'].toString()
           : createdAt.microsecondsSinceEpoch.toString(),
+      hiveKey: hiveKey,
       name: map['name']?.toString() ?? '',
       price: (map['price'] as num?)?.toDouble() ?? 0.0,
       renewalDate:
@@ -41,6 +44,26 @@ class Subscription {
           DateTime.now(),
       location: map['location']?.toString() ?? 'Unknown location',
       createdAt: createdAt,
+    );
+  }
+
+  Subscription copyWith({
+    String? id,
+    dynamic hiveKey,
+    String? name,
+    double? price,
+    DateTime? renewalDate,
+    String? location,
+    DateTime? createdAt,
+  }) {
+    return Subscription(
+      id: id ?? this.id,
+      hiveKey: hiveKey ?? this.hiveKey,
+      name: name ?? this.name,
+      price: price ?? this.price,
+      renewalDate: renewalDate ?? this.renewalDate,
+      location: location ?? this.location,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 }

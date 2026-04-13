@@ -88,7 +88,11 @@ class _SubscriptionList extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       itemCount: subscriptions.length,
       itemBuilder: (context, index) {
-        return _SubscriptionCard(subscription: subscriptions[index]);
+        final subscription = subscriptions[index];
+        return _SubscriptionCard(
+          key: ValueKey(subscription.hiveKey),
+          subscription: subscription,
+        );
       },
     );
   }
@@ -97,7 +101,7 @@ class _SubscriptionList extends StatelessWidget {
 class _SubscriptionCard extends StatelessWidget {
   final Subscription subscription;
 
-  const _SubscriptionCard({required this.subscription});
+  const _SubscriptionCard({super.key, required this.subscription});
 
   int _daysRemaining(DateTime renewalDate) {
     final now = DateTime.now();
@@ -180,7 +184,7 @@ class _SubscriptionCard extends StatelessWidget {
                     if (shouldDelete == true) {
                       await context
                           .read<SubscriptionProvider>()
-                          .deleteSubscription(subscription.id);
+                          .deleteSubscription(subscription.hiveKey);
 
                       if (!context.mounted) return;
 
